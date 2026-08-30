@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>After You — a memoir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   EDIT ME — everything you need to customize lives in TWO places
+   inside the <script> at the bottom of this file:
+   1) The STANCES array (title, kicker, excerpt text for your 5 entries)
+   2) The CONFIG object (Instagram handle, feedback form endpoint)
+   Search for "EDIT ME" to jump between them.
+   ============================================================ */
+
+:root{
+  --paper: #faf3ef;        /* base background — whisper-blush ivory */
+  --paper-deep: #f1e4dd;   /* card / section background */
+  --paper-white: #fffdfa;  /* inputs, near-white highlight */
+  --ink: #362e28;          /* primary text — warm charcoal */
+  --ink-soft: #6b5f55;     /* secondary text — warm taupe */
+  --sage: #8b9a7c;         /* stems / leaves */
+  --sage-deep: #5f6e52;    /* deeper sage — line art, dividers */
+  --blush: #c98b90;        /* petal pink */
+  --blush-deep: #a15d66;   /* deeper mauve-rose — primary accent */
+  --gold: #c7a467;         /* soft brass — pollen, small-caps labels */
+  --display: 'Fraunces', serif;
+  --reading: 'Literata', serif;
+  --ui: 'Work Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html,body{
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui);
+  min-height: 100vh;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body{
+  background-image:
+    radial-gradient(ellipse 70% 40% at 15% -5%, rgba(201,139,144,0.14), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(139,154,124,0.12), transparent 60%);
+}
+
+/* faint pressed-paper grain, kept very quiet on purpose */
+body::before{
+  content:"";
+  position: fixed; inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: multiply;
+  z-index: 999;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.wrap{
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 28px 20px 48px;
+  position: relative;
+}
+
+/* ambient corner flourishes — desktop only, switched on in the breakpoint below */
+.deco-corner{
+  position: fixed;
+  z-index: -1;
+  opacity: 0.45;
+  pointer-events: none;
+  display: none;
+}
+.deco-tl{ top: 28px; left: 28px; }
+.deco-br{ bottom: 28px; right: 28px; }
+
+header{
+  display:flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+.header-row{
+  display:flex;
+  align-items:baseline;
+  justify-content: space-between;
+}
+
+.wordmark{
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.back-btn{
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--blush-deep);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  display:none;
+}
+.back-btn.show{ display:inline-block; }
+
+/* ---------- sprig (baby's breath) — reused as a quiet divider ---------- */
+.sprig{ display:block; opacity: 0.8; }
+.sprig-row{ margin: 14px 0 4px; }
+.sprig-row.center{ display:flex; justify-content:center; }
+
+/* ---------- screens ---------- */
+.screen{ display:none; }
+.screen.active{ display:block; animation: fadein 0.5s ease both; }
+@keyframes fadein{ from{opacity:0; transform: translateY(6px);} to{opacity:1; transform:none;} }
+
+/* ---------- home ---------- */
+.hero-kicker{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+h1{
+  font-family: var(--display);
+  font-weight: 300;
+  font-size: 44px;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+h1 em{ font-style: italic; font-weight: 500; color: var(--blush-deep); }
+
+.hero-sub{
+  font-family: var(--reading);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 38ch;
+  margin-bottom: 30px;
+}
+
+.choose-line{
+  font-family: var(--ui);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--sage-deep);
+  margin-bottom: 16px;
+}
+
+.stance-grid{
+  display: grid;
+  gap: 14px;
+}
+
+.stance-card{
+  position: relative;
+  text-align: left;
+  background: var(--paper-deep);
+  border: 1px solid rgba(139,154,124,0.35);
+  border-radius: 4px 4px 12px 12px;
+  padding: 14px 18px 16px;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(54,46,40,0.05);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.stance-card:active{ transform: scale(0.98) rotate(0deg) !important; border-color: var(--blush-deep); box-shadow: 0 1px 4px rgba(54,46,40,0.06); }
+.stance-card:nth-child(odd){ transform: rotate(-0.4deg); }
+.stance-card:nth-child(even){ transform: rotate(0.35deg); }
+
+.stance-title{
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--ink);
+  margin: 2px 0 4px;
+}
+.stance-kicker{
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ---------- excerpt ---------- */
+.excerpt-kicker{
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.excerpt-title{
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 30px;
+  margin-bottom: 24px;
+  color: var(--blush-deep);
+}
+.excerpt-body{
+  font-family: var(--reading);
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--ink);
+  white-space: pre-wrap;
+  margin-bottom: 36px;
+}
+.excerpt-body::first-letter{
+  font-family: var(--display);
+  font-size: 52px;
+  float: left;
+  line-height: 0.8;
+  padding: 6px 8px 0 0;
+  color: var(--blush-deep);
+  font-weight: 500;
+}
+
+.actions{ display:flex; flex-direction: column; gap: 10px; }
+
+.btn{
+  font-family: var(--ui);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+.btn:active{ transform: scale(0.97); }
+.btn-primary{ background: var(--blush-deep); color: var(--paper-white); }
+.btn-ghost{ background: transparent; color: var(--ink-soft); border: 1px solid rgba(54,46,40,0.18); }
+
+/* ---------- feedback ---------- */
+.q{ margin-bottom: 26px; }
+.q-label{
+  font-family: var(--ui);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.pill-row{ display:flex; flex-wrap: wrap; gap: 8px; }
+.pill{
+  font-family: var(--ui);
+  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(139,154,124,0.5);
+  background: var(--paper-white);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.pill.selected{ background: var(--blush-deep); border-color: var(--blush-deep); color: var(--paper-white); }
+
+textarea, input[type=text]{
+  width: 100%;
+  background: var(--paper-white);
+  border: 1px solid rgba(139,154,124,0.4);
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: var(--reading);
+  font-size: 15px;
+  padding: 12px 14px;
+  resize: none;
+}
+textarea:focus, input:focus{ outline: none; border-color: var(--blush-deep); }
+.optional-tag{ font-family: var(--mono); font-size: 10px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px;}
+
+/* ---------- thanks ---------- */
+.bloom-wrap{ display:flex; justify-content:center; margin-bottom: 6px; }
+.bloom{ animation: bloomin 0.7s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes bloomin{ from{ opacity:0; transform: scale(0.8); } to{ opacity:1; transform: scale(1); } }
+
+.thanks-mark{
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--blush-deep);
+  text-align: center;
+  margin-bottom: 14px;
+}
+.thanks-body{
+  font-family: var(--reading);
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  max-width: 38ch;
+  text-align: center;
+  margin-left: auto; margin-right: auto;
+}
+
+footer{
+  margin-top: 44px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---------- keyboard focus (desktop / accessibility) ---------- */
+button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible{
+  outline: 2px solid var(--blush-deep);
+  outline-offset: 3px;
+}
+
+/* ---------- hover states — only for devices that actually hover, so touch never gets a stuck hover ---------- */
+@media (hover:hover) and (pointer:fine){
+  .stance-card{ cursor: pointer; }
+  .stance-card:hover{
+    transform: translateY(-3px) rotate(0deg) !important;
+    border-color: var(--blush-deep);
+    box-shadow: 0 10px 24px rgba(54,46,40,0.10);
+  }
+  .btn-primary:hover{ background: var(--blush); transform: translateY(-1px); }
+  .btn-ghost:hover{ border-color: var(--blush-deep); color: var(--ink); }
+  .pill:hover{ border-color: var(--blush-deep); color: var(--ink); }
+  .back-btn:hover{ opacity: 0.72; }
+  #instaLink:hover{ background: var(--blush); transform: translateY(-1px); }
+}
+
+/* ---------- desktop / larger screens — same content, framed as a floating reading card ---------- */
+@media (min-width: 720px){
+  body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 15% -5%, rgba(201,139,144,0.14), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(139,154,124,0.12), transparent 60%),
+      radial-gradient(ellipse 50% 45% at 50% 50%, rgba(199,164,103,0.06), transparent 70%);
+  }
+  .wrap{
+    max-width: 560px;
+    min-height: auto;
+    padding: 44px 48px 52px;
+    background: var(--paper);
+    border: 1px solid rgba(139,154,124,0.25);
+    border-radius: 22px;
+    box-shadow: 0 30px 80px rgba(54,46,40,0.14), 0 4px 14px rgba(54,46,40,0.06);
+  }
+  .deco-corner{ display: block; }
+  h1{ font-size: 50px; }
+  .hero-sub{ font-size: 17px; }
+  .excerpt-body{ font-size: 19px; }
+  .excerpt-body::first-letter{ font-size: 58px; }
+  .stance-grid{ grid-template-columns: 1fr 1fr; gap: 16px; }
+  .actions{ flex-direction: row; }
+  .actions .btn{ flex: 1; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<svg class="deco-corner deco-tl" viewBox="0 0 140 70" width="140" height="70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M4 60 C 24 40, 20 18, 44 6 C 58 -1, 74 10, 70 26" stroke="var(--sage-deep)" stroke-width="1" stroke-linecap="round"/>
+  <circle cx="44" cy="7" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+  <circle cx="62" cy="16" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+  <circle cx="20" cy="30" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+</svg>
+<svg class="deco-corner deco-br" viewBox="0 0 140 70" width="140" height="70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M136 10 C 116 30, 120 52, 96 64 C 82 71, 66 60, 70 44" stroke="var(--sage-deep)" stroke-width="1" stroke-linecap="round"/>
+  <circle cx="96" cy="63" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+  <circle cx="78" cy="54" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+  <circle cx="120" cy="40" r="2" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="1"/>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="header-row">
+      <span class="wordmark">After You</span>
+      <button class="back-btn" id="backBtn">← back</button>
+    </div>
+    <div class="sprig-row">
+      <svg class="sprig" viewBox="0 0 100 20" width="100" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 13 C 18 4, 32 17, 50 8 C 66 2, 80 14, 98 6" stroke="var(--sage-deep)" stroke-width="1" stroke-linecap="round"/>
+        <circle cx="17" cy="8" r="1.7" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.9"/>
+        <circle cx="34" cy="15" r="1.7" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.9"/>
+        <circle cx="51" cy="7" r="1.7" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.9"/>
+        <circle cx="68" cy="12" r="1.7" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.9"/>
+        <circle cx="87" cy="7" r="1.7" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.9"/>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ================= HOME ================= -->
+  <section class="screen active" id="screen-home">
+    <div class="hero-kicker">a memoir, in progress</div>
+    <h1>Five ways <em>in.</em></h1>
+    <p class="hero-sub">Pick whichever finds you first. One page, nothing more, before the rest of it exists.</p>
+    <div class="choose-line">Choose an entry point</div>
+    <div class="stance-grid" id="stanceGrid"></div>
+  </section>
+
+  <!-- ================= EXCERPT ================= -->
+  <section class="screen" id="screen-excerpt">
+    <div class="excerpt-kicker" id="excerptKicker"></div>
+    <div class="excerpt-title" id="excerptTitle"></div>
+    <div class="excerpt-body" id="excerptBody"></div>
+    <div class="actions">
+      <button class="btn btn-primary" id="toFeedbackBtn">Leave a thought</button>
+      <button class="btn btn-ghost" id="toHomeFromExcerptBtn">Try another way in</button>
+    </div>
+  </section>
+
+  <!-- ================= FEEDBACK ================= -->
+  <section class="screen" id="screen-feedback">
+    <div class="hero-kicker">quick, honest, five questions</div>
+    <h1 style="font-size:30px; margin-bottom:28px;">What did that <em>leave</em> you with?</h1>
+
+    <form id="feedbackForm">
+      <div class="q">
+        <div class="q-label">1. What's one line that stayed with you?</div>
+        <textarea name="line" rows="2" placeholder="Type it, or paraphrase it"></textarea>
+      </div>
+
+      <div class="q">
+        <div class="q-label">2. How did it leave you feeling?</div>
+        <div class="pill-row" data-pillgroup="feeling">
+          <button type="button" class="pill">Moved</button>
+          <button type="button" class="pill">Curious</button>
+          <button type="button" class="pill">Unaffected</button>
+          <button type="button" class="pill">Something else</button>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-label">3. Would you want to keep reading?</div>
+        <div class="pill-row" data-pillgroup="wantmore">
+          <button type="button" class="pill">Yes, definitely</button>
+          <button type="button" class="pill">Maybe</button>
+          <button type="button" class="pill">Not really</button>
+        </div>
+      </div>
+
+      <div class="q">
+        <div class="q-label">4. What would you want more of?</div>
+        <textarea name="more" rows="2" placeholder="Be blunt, it helps"></textarea>
+      </div>
+
+      <div class="q">
+        <div class="q-label">5. Instagram handle<span class="optional-tag">optional</span></div>
+        <input type="text" name="handle" placeholder="if you'd like a way to keep up">
+      </div>
+
+      <input type="hidden" name="stance" id="stanceHiddenField">
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Send it</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= THANKS ================= -->
+  <section class="screen" id="screen-thanks">
+    <div class="bloom-wrap">
+      <svg class="bloom" viewBox="0 0 64 64" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg" id="chrysanthemum"></svg>
+    </div>
+    <div class="thanks-mark">Thank you.</div>
+    <p class="thanks-body">That's more than most books get before they're finished. Come back for the rest as it's written.</p>
+    <div class="actions">
+      <a class="btn btn-primary" id="instaLink" href="#" target="_blank" rel="noopener">Follow along on Instagram</a>
+      <button class="btn btn-ghost" id="toHomeFromThanksBtn">Read another entry point</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="sprig-row center">
+      <svg class="sprig" viewBox="0 0 80 16" width="80" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 10 C 14 3, 26 13, 40 6 C 52 1, 64 11, 78 5" stroke="var(--sage-deep)" stroke-width="0.9" stroke-linecap="round"/>
+        <circle cx="14" cy="6" r="1.4" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+        <circle cx="27" cy="11" r="1.4" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+        <circle cx="52" cy="4" r="1.4" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+        <circle cx="65" cy="10" r="1.4" fill="var(--paper)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+      </svg>
+    </div>
+    after you — still being written
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   EDIT ME (1 of 2) — basic config
+   ============================================================ */
+const CONFIG = {
+  // Your Instagram handle for the book account (without the @)
+  instagramHandle: "yourbookaccount",
+
+  // Where feedback gets sent. Easiest free option: formspree.io
+  // 1. Go to formspree.io, create a free form, verify your email
+  // 2. Copy the endpoint it gives you (looks like https://formspree.io/f/xxxxxxxx)
+  // 3. Paste it below. Until you do, submissions just show the thank-you
+  //    screen locally without sending anywhere.
+  feedbackEndpoint: "" // e.g. "https://formspree.io/f/abcd1234"
+};
+
+/* ============================================================
+   EDIT ME (2 of 2) — your five stances
+   title:   short, evocative name for this way into the book
+   kicker:  a one-line category tag shown above the excerpt
+   excerpt: the actual page/excerpt text. Use \n\n for paragraph breaks.
+   ============================================================ */
+const STANCES = [
+  {
+    title: "[ Stance title ]",
+    kicker: "[ category, e.g. \"on love\" ]",
+    excerpt: "[ Drop one excerpt here, a page, no more. Let it be the one that makes them want the rest. ]"
+  },
+  {
+    title: "[ Stance title ]",
+    kicker: "[ category ]",
+    excerpt: "[ Excerpt text ]"
+  },
+  {
+    title: "[ Stance title ]",
+    kicker: "[ category ]",
+    excerpt: "[ Excerpt text ]"
+  },
+  {
+    title: "[ Stance title ]",
+    kicker: "[ category ]",
+    excerpt: "[ Excerpt text ]"
+  },
+  {
+    title: "[ Stance title ]",
+    kicker: "[ category ]",
+    excerpt: "[ Excerpt text ]"
+  }
+];
+
+/* ============================================================
+   Below this line is behavior, not content. No need to edit.
+   ============================================================ */
+const screens = {
+  home: document.getElementById('screen-home'),
+  excerpt: document.getElementById('screen-excerpt'),
+  feedback: document.getElementById('screen-feedback'),
+  thanks: document.getElementById('screen-thanks'),
+};
+const backBtn = document.getElementById('backBtn');
+let currentStance = null;
+
+const sprigSVG = `<svg class="sprig" viewBox="0 0 70 16" width="46" height="11" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:6px;">
+  <path d="M2 10 C 12 3, 22 13, 34 6 C 46 1, 56 11, 68 5" stroke="var(--sage-deep)" stroke-width="1" stroke-linecap="round"/>
+  <circle cx="12" cy="6" r="1.3" fill="var(--paper-deep)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+  <circle cx="23" cy="11" r="1.3" fill="var(--paper-deep)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+  <circle cx="46" cy="4" r="1.3" fill="var(--paper-deep)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+  <circle cx="57" cy="10" r="1.3" fill="var(--paper-deep)" stroke="var(--sage-deep)" stroke-width="0.7"/>
+</svg>`;
+
+function showScreen(name){
+  Object.values(screens).forEach(s => s.classList.remove('active'));
+  screens[name].classList.add('active');
+  backBtn.classList.toggle('show', name !== 'home');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderGrid(){
+  const grid = document.getElementById('stanceGrid');
+  grid.innerHTML = '';
+  STANCES.forEach((s, i) => {
+    const card = document.createElement('button');
+    card.className = 'stance-card';
+    card.innerHTML = `${sprigSVG}<div class="stance-kicker">${s.kicker}</div><div class="stance-title">${s.title}</div>`;
+    card.addEventListener('click', () => openExcerpt(i));
+    grid.appendChild(card);
+  });
+}
+
+function openExcerpt(i){
+  currentStance = STANCES[i];
+  document.getElementById('excerptKicker').textContent = currentStance.kicker;
+  document.getElementById('excerptTitle').textContent = currentStance.title;
+  document.getElementById('excerptBody').textContent = currentStance.excerpt;
+  document.getElementById('stanceHiddenField').value = currentStance.title;
+  showScreen('excerpt');
+}
+
+document.getElementById('toFeedbackBtn').addEventListener('click', () => showScreen('feedback'));
+document.getElementById('toHomeFromExcerptBtn').addEventListener('click', () => showScreen('home'));
+document.getElementById('toHomeFromThanksBtn').addEventListener('click', () => showScreen('home'));
+backBtn.addEventListener('click', () => showScreen('home'));
+
+document.querySelectorAll('.pill-row').forEach(row => {
+  row.addEventListener('click', (e) => {
+    if(!e.target.classList.contains('pill')) return;
+    [...row.children].forEach(p => p.classList.remove('selected'));
+    e.target.classList.add('selected');
+  });
+});
+
+document.getElementById('instaLink').href = `https://instagram.com/${CONFIG.instagramHandle}`;
+
+// build the chrysanthemum line-art bloom: two layered rings of petals around a soft gold core
+(function buildChrysanthemum(){
+  const svg = document.getElementById('chrysanthemum');
+  const cx = 32, cy = 32;
+  let paths = '';
+  const outer = 12, inner = 8;
+  for(let i=0; i<outer; i++){
+    const deg = (360/outer) * i;
+    paths += `<path d="M32 32 C 30 20, 34 9, 32 3" stroke="var(--blush-deep)" stroke-width="1" stroke-linecap="round" transform="rotate(${deg} ${cx} ${cy})" opacity="0.85"/>`;
+  }
+  for(let i=0; i<inner; i++){
+    const deg = (360/inner) * i + 22;
+    paths += `<path d="M32 32 C 31 24, 33 17, 32 11" stroke="var(--blush)" stroke-width="1" stroke-linecap="round" transform="rotate(${deg} ${cx} ${cy})" opacity="0.9"/>`;
+  }
+  paths += `<circle cx="32" cy="32" r="3.4" fill="var(--gold)" opacity="0.9"/>`;
+  svg.innerHTML = paths;
+})();
+
+document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const feelingPill = form.querySelector('[data-pillgroup="feeling"] .selected');
+  const wantmorePill = form.querySelector('[data-pillgroup="wantmore"] .selected');
+  const payload = {
+    stance: data.get('stance'),
+    line_that_stayed: data.get('line'),
+    feeling: feelingPill ? feelingPill.textContent : '',
+    want_more: wantmorePill ? wantmorePill.textContent : '',
+    what_missing: data.get('more'),
+    instagram_handle: data.get('handle')
+  };
+
+  if(CONFIG.feedbackEndpoint){
+    try{
+      await fetch(CONFIG.feedbackEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    }catch(err){
+      console.error('Feedback send failed', err);
+    }
+  }
+  showScreen('thanks');
+});
+
+renderGrid();
+</script>
+
+</body>
+</html>
